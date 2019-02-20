@@ -3,12 +3,14 @@
 namespace app\controllers;
 
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\GithubForm;
 
 class SiteController extends Controller
 {
@@ -61,7 +63,32 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new GithubForm();
+        $result = null;
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $url = str_replace('https://github.com/', '', $model->github_url);
+            $params = explode('/', $url);
+            if (count($params) === 2) {
+                $commits = GithubForm::getGithubRepoCommits($params[0], $params[1], $model->date_start, $model->date_end);
+                if (is_array($commits) && !empty($commits)) {
+                    $result = GithubForm::getGithubRepoCommitsFiles($params[0], $params[1], $commits);
+                }
+            }
+        }
+        $provider = new ArrayDataProvider([
+            'allModels' => $result,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => ['filename', 'commits', 'authors'],
+            ],
+        ]);
+        return $this->render('index', [
+            'model' => $model,
+            'provider' => $provider,
+        ]);
     }
 
     /**
