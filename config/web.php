@@ -13,7 +13,7 @@ $config = [
     ],
     'components' => [
         'request' => [
-            'cookieValidationKey' => '65E84BE33532FB784C48129675F9EFF3A682B27168C0EA744B2CF58EE02337C5',
+            'cookieValidationKey' => '<Your key here>',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
