@@ -38,19 +38,23 @@ class GithubForm extends Model
         $curl = new curl\Curl();
         $response = $curl->setGetParams([
             'branch' => 'master',
-            'since' => $since,
-            'until' => $until
+            'since' => date('Y-m-d\TH:i:s\Z', strtotime($since . ' 00:00:00')),
+            'until' => date('Y-m-d\TH:i:s\Z', strtotime($until . ' 23:59:59'))
         ])->setHeaders([
-            'Authorization' => Yii::$app->params['github_token']
+            'Authorization' => 'token ' . Yii::$app->params['github_token']
         ])->get('https://api.github.com/repos/' . $username . '/' . $reponame . '/commits');
         if ($curl->errorCode === null) {
             $raw_result = json_decode($response);
-            foreach ($raw_result as $r) {
-                $result[] = [
-                    'sha' => $r->sha,
-                    'author' => $r->commit->author->name,
-                    'author_email' => $r->commit->author->email
-                ];
+            if (is_array($raw_result) && !empty($raw_result)) {
+                foreach ($raw_result as $r) {
+                    if ($r) {
+                        $result[] = [
+                            'sha' => $r->sha,
+                            'author' => $r->commit->author->name,
+                            'author_email' => $r->commit->author->email
+                        ];
+                    }
+                }
             }
         } else {
             // TODO Error Handling $curl->errorCode
@@ -67,7 +71,7 @@ class GithubForm extends Model
         foreach ($commits as $c) {
             $curl = new curl\Curl();
             $response = $curl->setHeaders([
-                'Authorization' => Yii::$app->params['github_token']
+                'Authorization' => 'token ' . Yii::$app->params['github_token']
             ])->get('https://api.github.com/repos/' . $username . '/' . $reponame . '/commits/' . $c['sha']);
             if ($curl->errorCode === null) {
                 $raw_result = json_decode($response);
