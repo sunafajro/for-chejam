@@ -98,8 +98,9 @@ class GithubForm extends Model
                                     'email' => $c['author_email'],
                                     'count' => 1
                                 ];
+                            } else {
+                                $result[$id]['authors'][$c['author_email']]['count'] += 1;
                             }
-                            $result[$id]['authors'][$c['author_email']]['count'] += 1; 
                         }
                     }
                 }
