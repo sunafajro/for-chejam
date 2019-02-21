@@ -73,7 +73,7 @@ class GithubForm extends Model
                 $raw_result = json_decode($response);
                 if ($raw_result && property_exists($raw_result, 'files')) {
                     foreach ($raw_result->files as $r) {
-                        $id = explode('?ref=', $r->contents_url)[0];
+                        $id = $r->filename;
                         if (!isset($result[$id])) {
                             $result[$id] = [
                                 'filename' => $r->filename,
@@ -81,12 +81,20 @@ class GithubForm extends Model
                                 'authors' => [
                                     $c['author_email'] => [
                                         'name' => $c['author'],
+                                        'email' => $c['author_email'],
                                         'count' => 1
                                     ]
                                 ]
                             ];                        
                         } else {
                             $result[$id]['commits'] += 1;
+                            if (!isset($result[$id]['authors'][$c['author_email']])) {
+                                $result[$id]['authors'][$c['author_email']] = [
+                                    'name' => $c['author'],
+                                    'email' => $c['author_email'],
+                                    'count' => 1
+                                ];
+                            }
                             $result[$id]['authors'][$c['author_email']]['count'] += 1; 
                         }
                     }
@@ -100,7 +108,7 @@ class GithubForm extends Model
             foreach ($result as $r) {
                 $authors = [];
                 foreach ($r['authors'] as $a) {
-                    $authors[] = $a['name'] . ' [' . $a['count'] . ']';
+                    $authors[] = $a['name'] . ' <' . $a['email'] . '> [' . $a['count'] . ']';
                 }
                 $preparedResult[] = [
                     'filename' => $r['filename'],
