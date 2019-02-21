@@ -41,7 +41,7 @@ class GithubForm extends Model
             'since' => $since,
             'until' => $until
         ])->setHeaders([
-            'Authorization' => 'token YOUR TOKEN HERE'
+            'Authorization' => Yii::$app->params['github_token']
         ])->get('https://api.github.com/repos/' . $username . '/' . $reponame . '/commits');
         if ($curl->errorCode === null) {
             $raw_result = json_decode($response);
@@ -67,7 +67,7 @@ class GithubForm extends Model
         foreach ($commits as $c) {
             $curl = new curl\Curl();
             $response = $curl->setHeaders([
-                'Authorization' => 'token YOUR TOKEN HERE'
+                'Authorization' => Yii::$app->params['github_token']
             ])->get('https://api.github.com/repos/' . $username . '/' . $reponame . '/commits/' . $c['sha']);
             if ($curl->errorCode === null) {
                 $raw_result = json_decode($response);
