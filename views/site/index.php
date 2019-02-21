@@ -8,7 +8,7 @@
 ?>
 
 <div class="site-index">
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <?php $form = ActiveForm::begin(['method' => 'get', 'action' => ['site/index'],]); ?>
     <div class="row">
         <div class="col-xs-12 col-sm-3">
             <?= $form->field($model, 'github_url')->textInput() ?>

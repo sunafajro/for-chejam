@@ -65,8 +65,11 @@ class SiteController extends Controller
     {
         $model = new GithubForm();
         $result = null;
-        if (Yii::$app->request->isPost) {
-            $model->load(Yii::$app->request->post());
+        $form_params = Yii::$app->request->get('GithubForm');
+        if ($form_params['github_url'] && $form_params['date_start'] && $form_params['date_end']) {
+            $model->github_url = $form_params['github_url'];
+            $model->date_start = $form_params['date_start'];
+            $model->date_end = $form_params['date_end'];
             $url = str_replace('https://github.com/', '', $model->github_url);
             $params = explode('/', $url);
             if (count($params) === 2) {
