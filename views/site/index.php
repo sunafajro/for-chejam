@@ -37,6 +37,7 @@
     <div>
         <?= GridView::widget([
             'dataProvider' => $provider,
+            'filterModel' => $filterModel,
         ]); ?>
     </div>
 </div>

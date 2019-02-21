@@ -6,11 +6,12 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use app\models\GithubFilter;
+use app\models\GithubForm;
+use app\models\ContactForm;
+use app\models\LoginForm;
 use yii\web\Controller;
 use yii\web\Response;
-use app\models\LoginForm;
-use app\models\ContactForm;
-use app\models\GithubForm;
 
 class SiteController extends Controller
 {
@@ -56,20 +57,11 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $model = new GithubForm();
-        $result = null;
-        $form_params = Yii::$app->request->get('GithubForm');
-        if ($form_params['github_url'] && $form_params['date_start'] && $form_params['date_end']) {
-            $model->github_url = $form_params['github_url'];
-            $model->date_start = $form_params['date_start'];
-            $model->date_end = $form_params['date_end'];
+        $result = [];
+        if ($model->load(Yii::$app->request->get())) {
             $url = str_replace('https://github.com/', '', $model->github_url);
             $params = explode('/', $url);
             if (count($params) === 2) {
@@ -79,8 +71,16 @@ class SiteController extends Controller
                 }
             }
         }
+        $resultData = [];
+        $filterModel = new GithubFilter();
+        if ($filterModel->load(Yii::$app->request->get())) {
+            $resultData = $filterModel->search($result, Yii::$app->request->get('GithubFilter'));
+        } else {
+            $resultData = $result;
+        }
+        
         $provider = new ArrayDataProvider([
-            'allModels' => $result,
+            'allModels' => $resultData,
             'pagination' => [
                 'pageSize' => 10,
             ],
@@ -88,9 +88,11 @@ class SiteController extends Controller
                 'attributes' => ['filename', 'commits', 'authors'],
             ],
         ]);
+
         return $this->render('index', [
             'model' => $model,
             'provider' => $provider,
+            'filterModel' => $filterModel
         ]);
     }
 
