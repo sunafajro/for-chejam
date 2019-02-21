@@ -2,6 +2,7 @@
     use yii\helpers\Html;
     use yii\widgets\ActiveForm;
     use yii\grid\GridView;
+    use kartik\date\DatePicker;
 
     $this->title = 'My Yii Application';
 ?>
@@ -13,10 +14,20 @@
             <?= $form->field($model, 'github_url')->textInput() ?>
         </div>
         <div class="col-xs-12 col-sm-3">
-            <?= $form->field($model, 'date_start')->textInput() ?>
+            <?= $form->field($model, 'date_start')->widget(DatePicker::classname(), [
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd'
+                ]
+            ]) ?>
         </div>
         <div class="col-xs-12 col-sm-3">
-            <?= $form->field($model, 'date_end')->textInput() ?>
+            <?= $form->field($model, 'date_end')->widget(DatePicker::classname(), [
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd'
+                ]
+            ]) ?>
         </div>
         <div class="col-xs-12 col-sm-3" style="padding-top: 25px">
             <?= Html::submitButton('Get!', ['class' => 'btn btn-success']) ?>
