@@ -118,7 +118,7 @@ class GithubForm extends Model
                 $preparedResult[] = [
                     'filename' => $r['filename'],
                     'commits' => $r['commits'],
-                    'authors' => implode(' ,', $authors)
+                    'authors' => implode('; ', $authors)
                 ];
             }
         }
