@@ -19,18 +19,19 @@ return [
 ]
 ```
 
-Update your vendor packages
+Установка пакетов приложения
 
-    docker-compose run --rm php composer update --prefer-dist
+    sudo docker-compose run --rm php composer update --prefer-dist
+    sudo docker-compose run --rm php composer install    
     
-Run the installation triggers (creating cookie validation code)
+Запуск контейнеров
 
-    docker-compose run --rm php composer install    
+    sudo docker-compose up -d
     
-Запуск контейнера
+Создать миграцию для таблицы файлов:
 
-    docker-compose up -d
-    
+    sudo docker-compose run --rm php yii migrate
+
 Приложение доступно по адресу:
 
     http://127.0.0.1:8000
